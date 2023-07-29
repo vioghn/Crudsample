@@ -1,1 +1,1 @@
-#sample .Netcore crud Project 
+# Dotnet FrameWork Crud Project
