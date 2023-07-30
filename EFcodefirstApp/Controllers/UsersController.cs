@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using AspnetCoreCRUDApp.Contracts;
 using EFcodefirstApp.Models;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System.Reflection.Metadata.Ecma335;
 
 namespace EFcodefirstApp.Controllers
 {
@@ -10,53 +8,55 @@ namespace EFcodefirstApp.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserContext userContext;
+        private readonly IUserService userService;
 
-        public UsersController(UserContext userContext)
+        public UsersController(IUserService userService)
         {
-            this.userContext = userContext; 
+            this.userService = userService;
         }
+
         [HttpGet]
         [Route("GetUsers")]
-        public List<users> GetUsers()
+        public ActionResult<List<users>> GetUsers()
         {
-            return userContext.users.ToList();
+            var users = userService.GetUsers();
+            return Ok(users);
         }
+
         [HttpGet]
         [Route("GetUser")]
-        
-        public users GetUser(int id)
+        public ActionResult<users> GetUser(int id)
         {
-            return userContext.users.Where(x => x.ID == id).FirstOrDefault();
+            var user = userService.GetUser(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
+
         [HttpPost]
         [Route("AddUser")]
-        public string AddUser(users users)
+        public ActionResult<string> AddUser(users user)
         {
-            string response = string.Empty;
-            userContext.users.Add(users);
-            userContext.SaveChanges();
-            return "user added"; 
+            var response = userService.AddUser(user);
+            return Ok(response);
         }
+
         [HttpPut]
         [Route("UpdateUser")]
-        public string UpdateUser(users user)
+        public ActionResult<string> UpdateUser(users user)
         {
-            userContext.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            userContext.SaveChanges();
-            return "User Updated"; 
-
+            var response = userService.UpdateUser(user);
+            return Ok(response);
         }
+
         [HttpDelete]
         [Route("DeleteUser")]
-        public string DeleteUser(users user)
+        public ActionResult<string> DeleteUser(users user)
         {
-            userContext.users.Remove(user);
-            userContext.SaveChanges();
-            return "user deleted";
-
+            var response = userService.DeleteUser(user);
+            return Ok(response);
         }
-
-
     }
 }

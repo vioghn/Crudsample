@@ -1,3 +1,5 @@
+using AspnetCoreCRUDApp.Contracts;
+using AspnetCoreCRUDApp.Services;
 using EFcodefirstApp.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddDbContext<UserContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Dbcon")));
+builder.Services.AddScoped<IUserService, UserService>(); // Add this line
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
